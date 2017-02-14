@@ -1,3 +1,4 @@
+# Usage: this script was from Assignment 1
 #Line below this is called a shebang, it indicates to command line which 
 #program to use to execute the script. Thus, the line below tells command line
 #to run the script in the bash program. However, if the default program 
