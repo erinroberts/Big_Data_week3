@@ -1,0 +1,274 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Python Pattern Counting Assigment\n",
+    "By: Erin Roberts\n",
+    "1. Count the number of each base across all sequences.\n",
+    "2. Count the number of each pair of bases (described as kmers of size 2).\n",
+    "3. Count the number of each pair of bases, without  assuming you know in advance the possible pairs (i.e. start with an empty dictionary).\n",
+    "4. Alter the counting function to allow for counting kmers of any size.\n",
+    "5. Organize your Jupyter notebook so that you have imported packages at the top, then your functions (count_2kmer; count2kmer_unknown; count_kmers), then a block where each function is called and outputs results.\n",
+    "6. Make sure your code is commented and functions have docstrings.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n",
+      "                                 Dload  Upload   Total   Spent    Left  Speed\n",
+      "100 21190  100 21190    0     0  31183      0 --:--:-- --:--:-- --:--:--  121k\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Download the sample data\n",
+    "!curl -O http://rachelss.github.io/Bioinformatics/sample.fastq\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "#specify file, open it, and read each line as an item in a list\n",
+    "filename = 'sample.fastq'\n",
+    "f = open(filename, 'r')\n",
+    "fastq = f.readlines()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 1\n",
+    "Count the number of each base across all sequences."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[2517, 2550, 2489, 2444]\n"
+     ]
+    }
+   ],
+   "source": [
+    "#function to count the number of each base across all sequences\n",
+    "counter = [0,0,0,0] #creates a variable with an empty position for each base\n",
+    "for line_num,line in enumerate(fastq): #assigns line number to the file line\n",
+    "    if line_num%4 == 1: #print only sequences on second line and leaves remainder 1 \n",
+    "        for base in line:\n",
+    "            if base == 'A':\n",
+    "                counter[0] = counter[0]+1 #tells you to add count to the counter variable if its this base\n",
+    "            elif base == 'C':\n",
+    "                counter[1] = counter[1]+1 #tells you to add count to the counter variable if its this base\n",
+    "            elif base == 'G':\n",
+    "                counter[2] = counter[2]+1 #tells you to add count to the counter variable if its this base\n",
+    "            elif base == 'T':\n",
+    "                counter[3] = counter[3]+1 #tells you to add count to the counter variable if its this base\n",
+    "print(counter)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 2\n",
+    "Count the number of each pair of bases (described as kmers of size 2)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "def count_kmers(): #define the function\n",
+    "    counter={'AC':0, 'AT':0, 'AA':0, 'AG':0, 'CA':0, 'CT':0, 'CG':0, 'CC':0,\n",
+    "        'TA':0, 'TT':0, 'TC':0, 'TG':0, 'GG':0, 'GC':0, 'GT':0, 'GA':0} #assign all the base combinations a value in the dictionary\n",
+    "    for line_number,line in enumerate(fastq):\n",
+    "        if line_number%4==1: #if its line 1+4n and line number/4 has a remainder of 1\n",
+    "            line=line.rstrip() #will strip the newline from each line\n",
+    "            for base_number,base in enumerate(line): # count number of bases in line\n",
+    "                if base_number != (len(line)-1): #only look at bases that aren't last in the line\n",
+    "                    kmer = line[base_number]+line[base_number +1] #define kmer as one number in the line and then the next number\n",
+    "                    if kmer in counter:\n",
+    "                        counter[kmer]+=1\n",
+    "                \n",
+    "    print(counter)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'AC': 665, 'CT': 636, 'GT': 627, 'CC': 630, 'GA': 633, 'GC': 620, 'AA': 632, 'TG': 628, 'TC': 615, 'TA': 588, 'CG': 623, 'CA': 638, 'AG': 627, 'GG': 581, 'AT': 574, 'TT': 583}\n"
+     ]
+    }
+   ],
+   "source": [
+    "count_kmers() "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 3\n",
+    "Count the number of each pair of bases, without assuming you know in advance the possible pairs\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def count_unknown(): #define the function \n",
+    "    counter = {} #create an empty dictionary \n",
+    "    for line_number,line in enumerate(fastq):\n",
+    "        if line_number%4==1: #if its line 1+4n and line number/4 has a remainder of 1\n",
+    "            line=line.rstrip() #will strip the newline from each line\n",
+    "            for base_number,base in enumerate(line): # count number of bases in line\n",
+    "                if base_number != (len(line)-1): #only look at bases that aren't last in the line\n",
+    "                    kmer = line[base_number]+line[base_number +1] #define kmer as one number in the line and then the next number\n",
+    "                    if kmer in counter:\n",
+    "                        counter[kmer]+=1 #if the kmer is in the dictionary then add 1 count\n",
+    "                    else: counter[kmer]=1 #if the kmer is not in the dictionary, then add it\n",
+    "    print(counter)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'AC': 665, 'CT': 636, 'GT': 627, 'CC': 630, 'GA': 633, 'GC': 620, 'AA': 632, 'TG': 628, 'TC': 615, 'TA': 588, 'CG': 623, 'CA': 638, 'AG': 627, 'GG': 581, 'AT': 574, 'TT': 583}\n"
+     ]
+    }
+   ],
+   "source": [
+    "count_unknown()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 4\n",
+    "Alter the counting function to allow for counting kmers of any size."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def count_anykmer(k): #define the function with the variable k inside it\n",
+    "    counter = {} #create an empty dictionary \n",
+    "    for line_number,line in enumerate(fastq):\n",
+    "        if line_number%4==1: #if its line 1+4n and line number/4 has a remainder of 1\n",
+    "            line=line.rstrip() #will strip the newline from each line\n",
+    "            for base_number,base in enumerate(line): # count number of bases in line\n",
+    "                if base_number < (len(line)-k+1): #only look at base numbers less than the length of the line that would give the last full kmer of the right size\n",
+    "                    kmer = line[base_number:base_number+k] #define kmer to be open ended between the base number and the base number plus the size of the kmer\n",
+    "                    if kmer in counter:\n",
+    "                        counter[kmer]+=1 #if the kmer is in the dictionary then add 1 count\n",
+    "                    else: counter[kmer]=1 #if the kmer is not in the dictionary, then add it\n",
+    "    print(counter)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'TCCT': 49, 'AGAT': 34, 'CTGC': 39, 'ATTG': 36, 'TTGC': 38, 'TTGT': 26, 'GGGC': 26, 'CGTC': 37, 'GTCG': 35, 'CGGG': 43, 'GCCA': 45, 'GACC': 45, 'CTGA': 43, 'TCTC': 40, 'GCAA': 33, 'CCAC': 50, 'AAGT': 46, 'TGAT': 33, 'GATC': 37, 'ATAT': 28, 'GCGG': 51, 'GGGT': 33, 'ATGG': 33, 'ATGA': 45, 'TATG': 35, 'CCCA': 32, 'AGGA': 31, 'CCGA': 41, 'CCAG': 42, 'TCAA': 35, 'CCGT': 43, 'GGAC': 40, 'AGTC': 47, 'AAAC': 41, 'AGAC': 35, 'GTAC': 36, 'TTCA': 34, 'GCGT': 31, 'CATT': 42, 'AACA': 37, 'AAGG': 31, 'ACTC': 49, 'GGAA': 39, 'TGCA': 36, 'CTCC': 37, 'TGCG': 42, 'GCAC': 41, 'ACAG': 47, 'GACT': 36, 'GGTG': 44, 'TTAT': 30, 'TCCA': 39, 'AGCC': 43, 'TCCC': 39, 'CGAG': 39, 'GCAG': 47, 'ACCG': 50, 'TCAC': 36, 'ACGA': 44, 'TAAC': 38, 'AAGC': 34, 'AGTG': 46, 'AACT': 50, 'AACC': 54, 'TTTT': 47, 'TTTC': 28, 'AATC': 29, 'GGTC': 34, 'CATC': 40, 'CAGA': 34, 'TTGG': 40, 'AAGA': 41, 'TCAT': 34, 'ACTT': 32, 'ATCA': 28, 'GGCA': 31, 'CGCT': 34, 'TATT': 28, 'ACAA': 40, 'GTAG': 47, 'TAAA': 43, 'GCCT': 42, 'CTCA': 44, 'AATA': 35, 'ATGT': 31, 'GAGG': 39, 'GAAG': 42, 'GGCG': 36, 'CCTT': 35, 'ACAC': 39, 'TCGA': 41, 'TAAG': 31, 'GTCT': 41, 'TCAG': 32, 'GCGA': 40, 'TACT': 40, 'CTTG': 24, 'TGCC': 35, 'CAGC': 47, 'GGCC': 36, 'GCTC': 35, 'AGTT': 37, 'CCCG': 36, 'GGGG': 33, 'GTTG': 33, 'GTTA': 32, 'ATAG': 38, 'CGGT': 31, 'CAAC': 42, 'GGTT': 34, 'GGCT': 35, 'GTGT': 37, 'GCTG': 36, 'AATT': 42, 'CGCA': 47, 'ACAT': 45, 'CACT': 49, 'CACC': 32, 'ATCT': 42, 'GATT': 32, 'TGTG': 33, 'ACTG': 49, 'CGTG': 43, 'TTGA': 30, 'CGCG': 39, 'GCCG': 28, 'CGGC': 37, 'AGGG': 28, 'TCTG': 39, 'AGAA': 43, 'TAGC': 41, 'TGAA': 39, 'GTGG': 39, 'CATA': 29, 'TGTT': 39, 'GAAA': 44, 'CCGC': 40, 'GGAG': 38, 'ATTA': 30, 'GTCA': 31, 'TATA': 32, 'GCTT': 37, 'GTTT': 33, 'GAAT': 29, 'CATG': 38, 'TCTT': 28, 'CTCG': 49, 'TGGG': 28, 'AATG': 34, 'TTCT': 31, 'GCGC': 42, 'CTTC': 27, 'GAGC': 33, 'GGAT': 32, 'GACG': 36, 'CCTG': 52, 'TGCT': 38, 'TCGG': 32, 'CAGG': 38, 'TTTG': 40, 'AAAG': 44, 'GAGA': 37, 'CCAT': 39, 'GACA': 43, 'CTAT': 35, 'CTTT': 31, 'TCGT': 39, 'CGTT': 35, 'CAAA': 35, 'CTGT': 52, 'ACGT': 29, 'TATC': 33, 'GGTA': 33, 'ATTC': 44, 'CCTA': 41, 'CTGG': 41, 'TACG': 39, 'TACC': 32, 'TTTA': 32, 'GAGT': 41, 'CGAT': 47, 'TTAC': 38, 'TCCG': 41, 'GTAA': 31, 'TAGG': 34, 'TCGC': 42, 'GTGC': 42, 'TGGC': 33, 'GATA': 41, 'TTCC': 44, 'CTAG': 30, 'CGAC': 35, 'TACA': 42, 'TGGA': 43, 'CTAC': 43, 'GTGA': 45, 'GCAT': 30, 'GTAT': 32, 'ACGC': 38, 'TAGA': 33, 'CAGT': 50, 'GAAC': 50, 'ACCA': 49, 'AAAT': 37, 'TTAG': 31, 'TGGT': 44, 'ACCT': 41, 'CCTC': 38, 'ATCC': 37, 'ATTT': 36, 'CTCT': 32, 'CGGA': 35, 'GTTC': 47, 'TTAA': 39, 'AGGT': 41, 'CGAA': 45, 'TCTA': 40, 'TGAC': 51, 'AGCA': 38, 'AACG': 30, 'CGCC': 41, 'ACCC': 24, 'GCCC': 40, 'AGTA': 45, 'AGCT': 29, 'ACTA': 44, 'CCCC': 32, 'ATGC': 31, 'TGTA': 36, 'ACGG': 32, 'AGGC': 43, 'AAAA': 34, 'CAAT': 32, 'CCCT': 36, 'TTCG': 38, 'CTAA': 47, 'AGCG': 45, 'TAAT': 42, 'ATCG': 31, 'GCTA': 29, 'GTCC': 50, 'TAGT': 38, 'CACG': 37, 'CAAG': 35, 'CACA': 48, 'ATAC': 35, 'CCAA': 35, 'GATG': 36, 'CCGG': 31, 'ATAA': 38, 'TGAG': 40, 'AGAG': 33, 'CTTA': 46, 'GGGA': 40, 'TGTC': 35, 'CGTA': 28}\n"
+     ]
+    }
+   ],
+   "source": [
+    "count_anykmer(4) #specify the size of the kmer you want to look for"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python [conda root]",
+   "language": "python",
+   "name": "conda-root-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
